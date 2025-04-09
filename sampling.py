@@ -1,3 +1,4 @@
+# +
 import os
 import re
 import sys
@@ -16,6 +17,8 @@ from sklearn.model_selection import train_test_split
 
 # 你自己定义的模块
 from config import *
+
+# +
 import sys
 import contextlib
 
@@ -25,6 +28,8 @@ def suppress_print(func):
             return func(*args, **kwargs)
     return wrapper
 
+
+# +
 @suppress_print
 def load_names(config):
     name_path = os.path.join(config.data_dir,"names.txt")
@@ -115,6 +120,7 @@ def oversample_to_balance(lines, y, c):
 
     pos_count = len(pos_samples)
     neg_count = len(neg_samples)
+    
 
     # 找到需要过采样的类别
     if pos_count > neg_count:
@@ -139,3 +145,6 @@ def oversample_to_balance(lines, y, c):
     new_c = pos_chapters + neg_chapters
 
     return new_lines, new_y, new_c
+# -
+
+

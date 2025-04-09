@@ -1,6 +1,7 @@
 import os
 import torch
 from torch import nn
+from sklearn.model_selection import train_test_split
 import numpy as np
 import pandas as pd
 from collections import Counter
@@ -11,29 +12,28 @@ from model import *
 from save import *
 from gensim.models import Word2Vec
 
+
 def main():
     config = LSTMConfig()
     logger = Logger(config)
-
+    
     # 加载数据
     df = pd.read_csv(os.path.join(config.data_dir, "hongloumeng.csv"), encoding='utf-8')
+    #df = df.iloc[80:120,:].reset_index(drop=True)
     vocab = get_vocab(config, df)
     w2v_model = train_word2vec(vocab)
     w2v_model.save(config.w2v_path)
-    print(config.w2v_path)
-
     split_point_acc = []
 
     # 开始按章节遍历训练
     for i in tqdm(range(config.range_start, config.range_end, config.range_step)):
         logger.log(f"=== Split Point: {i} ===")
         config.split_point = i
-
+        
         lines, y, c = get_text(config, df)
-        lines, y, c = oversample_to_balance(lines, y, c)
 
         # 划分数据
-        X_train, X_test, X_val, y_train, y_test, y_val = stratified_split_by_chapter(lines, y, c)
+        X_train, X_test, X_val, y_train, y_test, y_val = stratified_split_by_chapter2(lines, y, c)
         logger.log(f"训练集类别分布: {Counter(y_train)}，验证集类别分布: {Counter(y_val)}，测试集类别分布: {Counter(y_test)}")
 
         # 预处理
@@ -105,3 +105,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+

@@ -1,20 +1,12 @@
 import argparse
 import os
 import torch
+import argparse
 import sys
 from datetime import datetime
-class BaseConfig(argparse.Namespace):
-    def print_params(self, prtf=print):
-        prtf("\nParameters:")
-        for attr, value in sorted(vars(self).items()):
-            prtf(f"{attr.upper()} = {value}")
-        prtf("")
 
-    def as_markdown(self):
-        text = "| Name | Value |\n|------|-------|\n"
-        for attr, value in sorted(vars(self).items()):
-            text += f"| {attr} | {value} |\n"
-        return text
+
+# +
 class BaseConfig(argparse.Namespace):
     def print_params(self, prtf=print):
         prtf("\nParameters:")
@@ -31,6 +23,8 @@ class BaseConfig(argparse.Namespace):
 class LSTMConfig(BaseConfig):
     def build_parser(self):
         parser = argparse.ArgumentParser("param")
+                
+        parser.add_argument('--seed', type=int, default=2, help='random seed')
 
         # 基础路径
         parser.add_argument('--data_dir', type=str, default=os.path.join(os.getcwd(), 'data'))
@@ -43,7 +37,7 @@ class LSTMConfig(BaseConfig):
         parser.add_argument('--hidden_size', type=int, default=200)
         parser.add_argument('--num_layers', type=int, default=1)
         parser.add_argument('--output_size', type=int, default=1)
-        parser.add_argument('--fix', action='store_true', help='fix embedding during training')
+        parser.add_argument('--fix', type = bool,default=True, help='fix embedding during training')
 
         # 数据处理参数
         parser.add_argument('--sen_len', type=int, default=40)
@@ -55,7 +49,7 @@ class LSTMConfig(BaseConfig):
 
         # 训练参数
         parser.add_argument('--batch_size', type=int, default=128)
-        parser.add_argument('--learning_rate', type=float, default=0.0001)
+        parser.add_argument('--learning_rate', type=float, default=0.001)
         parser.add_argument('--num_epochs', type=int, default=10)
         parser.add_argument('--grad_clip', type=float, default=5.0)# 暂未用到
         parser.add_argument('--num_workers', type=int, default=8)
@@ -98,12 +92,14 @@ class LSTMConfig(BaseConfig):
         self.config_path = os.path.join(self.saved_result_dir, "config.txt")
 
         # 创建目录（在所有路径都定义好之后）
-        os.makedirs(self.log_dir, exist_ok=True)
-        os.makedirs(self.tensorboard_log_dir, exist_ok=True)
-        os.makedirs(self.saved_result_dir, exist_ok=True)
+        #os.makedirs(self.log_dir, exist_ok=True)
+        #os.makedirs(self.tensorboard_log_dir, exist_ok=True)
+        #os.makedirs(self.saved_result_dir, exist_ok=True)
 
-        # self.print_params() 打印参数设置
+        #self.print_params()# 打印参数设置
 
+
+# +
 from torch.utils.tensorboard import SummaryWriter
 
 class Logger:
@@ -111,8 +107,10 @@ class Logger:
         self.config = config
         self.log_file = open(config.txt_log_path, 'w', encoding='utf8')
         self.writer = SummaryWriter(log_dir=config.tensorboard_log_dir)
-
+        
     def log(self, text):
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        text = f"[{timestamp}] {text}"
         print(text)
         self.log_file.write(text + '\n')
         self.log_file.flush()
@@ -125,6 +123,8 @@ class Logger:
         self.writer.add_scalar(name, value, step)
 
 
+
+# +
 import sys
 import contextlib
 
@@ -133,3 +133,6 @@ def suppress_print(func):
         with contextlib.redirect_stdout(None):
             return func(*args, **kwargs)
     return wrapper
+# -
+
+

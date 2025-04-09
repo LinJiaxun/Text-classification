@@ -1,20 +1,21 @@
+# +
 from torch.utils import data
 from config import *
 from gensim.models import Word2Vec
-from sklearn.model_selection import train_test_split
-import pandas as pd
-import numpy as np
 
-
+@suppress_print
 def train_word2vec(x):
     model = Word2Vec(x, vector_size=200, window=3, min_count=1, workers=12, sg=1)
     return model
 
-
+from sklearn.model_selection import train_test_split
+import pandas as pd
+import numpy as np
 
 def stratified_split_by_chapter(lines, y, c, test_size=0.2, val_size=0.1, random_state=2024):
     """
-    按章节均匀划分训练集、验证集和测试集
+    按章节划分训练集、验证集和测试集
+    每一章的后20%为测试集，前80%为训练集，训练集中的后10%为验证集
     """
 
     df = pd.DataFrame({'lines': lines, 'y': y, 'chapter': c})
@@ -22,28 +23,29 @@ def stratified_split_by_chapter(lines, y, c, test_size=0.2, val_size=0.1, random
     train_set, test_set, val_set = [], [], []
     train_labels, test_labels, val_labels = [], [], []
 
-    # 每一回（章节）单独进行划分
+    # 每一章（章节）单独进行划分
     for chapter in df['chapter'].unique():
-        df_chapter = df[df['chapter'] == chapter]
+        df_chapter = df[df['chapter'] == chapter].sort_index()  # 确保按顺序排列
 
-        # 先划分出测试集（20%）
-        temp_train, temp_test = train_test_split(
-            df_chapter, test_size=test_size, random_state=random_state
-        )
+        # 获取前80%作为训练集，后20%作为测试集
+        train_size = int(len(df_chapter) * (1 - test_size))
+        temp_train = df_chapter[:train_size]
+        temp_test = df_chapter[train_size:]
 
-        # 再从训练集中划分验证集（10%）
-        temp_train, temp_val = train_test_split(
-            temp_train, test_size=val_size, random_state=random_state
-        )
+        # 在训练集内再划分出验证集（后10%作为验证集）
+        val_size_in_train = int(len(temp_train) * val_size)
+        temp_val = temp_train[-val_size_in_train:]
+        temp_train = temp_train[:-val_size_in_train]
 
+        # 添加到各自的集合
         train_set.append(temp_train['lines'].tolist())
         train_labels.append(temp_train['y'].tolist())
 
-        test_set.append(temp_test['lines'].tolist())
-        test_labels.append(temp_test['y'].tolist())
-
         val_set.append(temp_val['lines'].tolist())
         val_labels.append(temp_val['y'].tolist())
+
+        test_set.append(temp_test['lines'].tolist())
+        test_labels.append(temp_test['y'].tolist())
 
     # 拼接所有章节的数据
     X_train = [item for sublist in train_set for item in sublist]
@@ -56,7 +58,6 @@ def stratified_split_by_chapter(lines, y, c, test_size=0.2, val_size=0.1, random
     y_val = [item for sublist in val_labels for item in sublist]
 
     return X_train, X_test, X_val, y_train, y_test, y_val
-
 
 class HLMDataset(data.Dataset):
     """
@@ -219,7 +220,7 @@ def training(train, valid, model,config):
     criterion = nn.BCELoss()
     t_batch = len(train)
     v_batch = len(valid)
-    optimizer = optim.AdamW(model.parameters(), lr=config.learning_rate)
+    optimizer = optim.AdamW(model.parameters(), lr=config.learning_rate,weight_decay=0.01)
     best_acc = 0
 
     for epoch in range(config.num_epochs):
@@ -279,3 +280,6 @@ def testing(test_loader, model,device):
             ret_output += outputs.int().tolist()
 
     return ret_output
+# -
+
+
