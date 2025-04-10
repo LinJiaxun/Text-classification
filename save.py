@@ -16,7 +16,7 @@ def save_split_point_results(config, split_point_acc):
              split_point_acc, marker='o', linestyle='-', color='b', label="Test Accuracy")
     plt.xlabel("Split Point")
     plt.ylabel("Accuracy (%)")
-    plt.title("Test Accuracy vs Split Point-lstm2")
+    plt.title(f"Test Accuracy vs Split Point n={config.n} step = {config.step}")
     plt.legend()
     plt.grid(True)
     plt.tight_layout()

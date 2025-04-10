@@ -10,11 +10,8 @@ from sampling import *
 from model import *
 from save import *
 from multiprocessing import Pool, set_start_method
-import pandas as pd
-from collections import Counter
-from config import LSTMConfig
-import os
 from filelock import FileLock
+import shutil
 
 
 # +
@@ -134,6 +131,11 @@ if __name__ == "__main__":
     save_config_to_file(config)
 
     safe_log("All process done.",log_path)
+    try:
+        shutil.rmtree(config.model_save_path)
+        print(f"✅ 已成功删除 model_save_path: {config.model_save_path}")
+    except Exception as e:
+        print(f"⚠️ 删除 {config.model_save_path} 失败: {e}")
 
 
 
