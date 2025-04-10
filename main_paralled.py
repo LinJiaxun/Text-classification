@@ -42,7 +42,7 @@ def run_single_split(split_point, shared_w2v_model_path,parallel_model_dir, log_
     config.w2v_path = shared_w2v_model_path
     config.model_save_path = os.path.join(parallel_model_dir, f"model_split_{split_point}.pt")
     
-    # set seed
+    # set seed (2)
     #np.random.seed(config.seed)
     #torch.manual_seed(config.seed)
     #torch.cuda.manual_seed_all(config.seed)

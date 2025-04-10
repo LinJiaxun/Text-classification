@@ -25,7 +25,7 @@ def main():
     w2v_model.save(config.w2v_path)
     split_point_acc = []
 
-    # 开始按章节遍历训练
+    # 按章节遍历训练
     for i in tqdm(range(config.range_start, config.range_end, config.range_step)):
         logger.log(f"=== Split Point: {i} ===")
         config.split_point = i

@@ -26,6 +26,7 @@ def save_split_point_results(config, split_point_acc):
     print(f"✅ 保存结果和图像至: {config.saved_result_dir}")
 
 def save_config_to_file(config):
+    # 保存参数设置
     with open(config.config_path, 'w', encoding='utf-8') as f:
         for attr, value in sorted(vars(config).items()):
             f.write(f"{attr.upper()} = {value}\n")

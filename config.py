@@ -23,7 +23,7 @@ class BaseConfig(argparse.Namespace):
 class LSTMConfig(BaseConfig):
     def build_parser(self):
         parser = argparse.ArgumentParser("param")
-                
+        # 随机数参数（暂未用到）        
         parser.add_argument('--seed', type=int, default=2, help='random seed')
 
         # 基础路径

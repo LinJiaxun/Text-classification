@@ -80,7 +80,7 @@ class HLMDataset(data.Dataset):
         return len(self.data)
 
 import numpy as np
-# 数据预处理
+# 数据预处理 作为LSTM输入
 @suppress_print
 class Preprocess():
     def __init__(self, config,sentences): #首先定义类的一些属性

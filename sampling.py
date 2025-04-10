@@ -53,7 +53,7 @@ from config import LSTMConfig
 def get_vocab(config,df):
     names=load_names(config)
     
-    # 文本预处理
+    # 文本预处理 生成vocab
     vocab = []
     for i in df.index.tolist():
         chap = df.iloc[i, 1]
