@@ -19,6 +19,9 @@ src/: Contains all core source code files.
 
 •	save.py : Functions to save models, logs, test accuracy and its plots
 
+•	EDA.py : code for data exploration analysis
+
+
 # Environment
 All experiments were conducted on a server with the following environments:
 
