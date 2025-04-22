@@ -38,16 +38,27 @@ NVIDIA Driver: 550.90.07
 
 # Requirement
 numpy
+
 pandas
+
 matplotlib
+
 tqdm
+
 jieba
+
 argparse
+
 json5
+
 torch>=1.9.0 
+
 gensim>=4.0.0
+
 tensorboard
+
 scikit-learn
+
 tqdm
 
 # Run Sample 
