@@ -21,12 +21,19 @@ src/: Contains all core source code files.
 
 # Environment
 All experiments were conducted on a server with the following environments:
+
 Host: GN-A40-070
+
 CPU: 2× Intel(R) Xeon(R) Platinum 8452Y, 72 cores total (36 cores per socket, no hyper-threading)
+
 GPU: NVIDIA A40, 48 GB VRAM, CUDA 12.5
+
 Memory: 503 GB RAM
+
 OS: Linux (kernel 5.14.0)
+
 Python Version: 3.10.12
+
 NVIDIA Driver: 550.90.07
 
 # Requirement
